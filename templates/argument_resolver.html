@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Are We Arguing?</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      background-color: #ffe6ec;
+      font-family: 'Comic Sans MS', cursive;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+      margin: 0;
+    }
+
+    #question {
+      font-size: 28px;
+      margin-bottom: 20px;
+      color: #d10068;
+    }
+
+    .btns {
+      display: flex;
+      gap: 20px;
+    }
+
+    .btn {
+      padding: 12px 25px;
+      font-size: 18px;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .yes {
+      background-color: #4CAF50;
+      color: white;
+    }
+
+    .no {
+      background-color: #f44336;
+      color: white;
+    }
+
+    #cuteImage {
+      margin-top: 30px;
+      width: 120px;
+      display: none;
+    }
+
+    #finalMsg {
+      font-size: 24px;
+      color: #ff3399;
+      margin-top: 20px;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+
+  <div id="question">Did we just have an argument?</div>
+  <div class="btns">
+    <button class="btn yes" onclick="handleYes()">Yes</button>
+    <button class="btn no" onclick="handleNo()">No</button>
+  </div>
+
+  <!-- Use Flask static path for the image -->
+  <img src="{{ url_for('static', filename='1.gif') }}" id="cuteImage" alt="Cute GIF">
+  <div id="finalMsg"></div>
+
+<script>
+  const initialQuestions = [
+    "Was it my fault?",
+    "Do you forgive me?",
+    "Do you love me still?"
+  ];
+
+  const emotionalForgiveMessage = "You don’t have to forgive me now… but I’ll wait until you do.";
+
+  const emotionalQuestionsLove = [
+    "If I hurt you then you better know I never actually meant to",
+    "When I piss you off it hurts me more than it does to you",
+    "I'll never give up on you",
+    "I want nothing but your smile…",
+    "Don’t you miss us?",
+    "Please don’t shut me out…",
+    "You still love me... right?"
+  ];
+
+  let current = 0;
+  let noClicks = 0;
+  let inLoveFlow = false;
+
+  // Get gif path from Flask
+  const localGifPath = "{{ url_for('static', filename='1.gif') }}";
+
+  function handleYes() {
+    if (!inLoveFlow) {
+      if (current < initialQuestions.length) {
+        document.getElementById("question").innerText = initialQuestions[current];
+        current++;
+        noClicks = 0;
+        resetButtons();
+      } else {
+        endWithLove();
+      }
+    } else {
+      endWithLove();
+    }
+  }
+
+  function handleNo() {
+    const noBtn = document.querySelector(".no");
+    const yesBtn = document.querySelector(".yes");
+    const currentText = document.getElementById("question").innerText;
+
+    // Was it my fault? → cute ending
+    if (currentText === "Was it my fault?") {
+      document.getElementById("question").innerText =
+        "I'll never blame you for anything baby so don't just blame yourself , come talk to me I love you and I would provide you with the warmth you need to get over whatever we might be going through ! Let’s keep smiling forever";
+      document.querySelector(".btns").style.display = "none";
+      document.getElementById("cuteImage").src = localGifPath;
+      document.getElementById("cuteImage").style.display = "block";
+      return;
+    }
+
+    // Do you forgive me? → soft message then move forward
+    if (currentText === "Do you forgive me?") {
+      document.getElementById("question").innerText = emotionalForgiveMessage;
+      setTimeout(() => {
+        document.getElementById("question").innerText = "Do you love me still?";
+        current++; // move to next initial question
+      }, 2500);
+      return;
+    }
+
+    // Do you love me still? → start emotional love sequence
+    if (currentText === "Do you love me still?" || inLoveFlow) {
+      inLoveFlow = true;
+
+      if (noClicks < emotionalQuestionsLove.length) {
+        document.getElementById("question").innerText = emotionalQuestionsLove[noClicks];
+        noClicks++;
+
+        // Shrink No
+        const noSize = Math.max(14 - noClicks * 2, 4);
+        noBtn.style.fontSize = `${noSize}px`;
+        noBtn.style.padding = `${Math.max(2, 8 - noClicks)}px`;
+
+        // Enlarge Yes
+        const yesSize = 18 + noClicks * 6;
+        yesBtn.style.fontSize = `${yesSize}px`;
+        yesBtn.style.padding = `${12 + noClicks * 3}px ${24 + noClicks * 5}px`;
+
+        if (noClicks >= emotionalQuestionsLove.length) {
+          noBtn.style.display = "none";
+          document.getElementById("question").innerText = "You can only choose yes now, baby 🥺";
+        }
+      }
+    }
+  }
+
+  function endWithLove() {
+    document.getElementById("question").style.display = "none";
+    document.querySelector(".btns").style.display = "none";
+    document.getElementById("cuteImage").src = localGifPath;
+    document.getElementById("cuteImage").style.display = "block";
+    document.getElementById("finalMsg").style.display = "block";
+    document.getElementById("finalMsg").innerText =
+      "I love you more than anything 💘 Let’s never let anything break us.";
+  }
+
+  function resetButtons() {
+    const yesBtn = document.querySelector(".yes");
+    const noBtn = document.querySelector(".no");
+
+    yesBtn.style.fontSize = "18px";
+    yesBtn.style.padding = "12px 25px";
+
+    noBtn.style.fontSize = "18px";
+    noBtn.style.padding = "12px 25px";
+    noBtn.style.display = "inline-block";
+  }
+</script>
+
+</body>
+</html>
