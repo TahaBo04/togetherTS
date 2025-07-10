@@ -119,6 +119,15 @@
     const yesBtn = document.querySelector(".yes");
     const currentText = document.getElementById("question").innerText;
 
+    // NEW: First question ("Did we just have an argument?") → No
+    if (currentText === "Did we just have an argument?") {
+      document.getElementById("question").innerText = "Yay! Let’s stay forever happy, my love 💖";
+      document.querySelector(".btns").style.display = "none";
+      document.getElementById("cuteImage").src = localGifPath;
+      document.getElementById("cuteImage").style.display = "block";
+      return;
+    }
+
     // Was it my fault? → cute ending
     if (currentText === "Was it my fault?") {
       document.getElementById("question").innerText =
