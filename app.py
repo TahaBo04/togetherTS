@@ -1,4 +1,5 @@
 from flask import Flask, render_template
+import os  # <-- this line is what was missing!
 
 app = Flask(__name__)
 
